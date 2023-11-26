@@ -6,20 +6,35 @@ export function UserForm() {
 		defaultValues: {
 			name: "John Doe",
 		},
+		onSubmit: (values) => {
+			form.setFieldMeta("name", (meta) => ({
+				...meta,
+				error: "This is an error",
+			}))
+		},
 	})
 
 	return (
 		<form.Provider>
-			<form>
+			<form
+				onSubmit={(e) => {
+					e.preventDefault()
+					e.stopPropagation()
+					form.handleSubmit()
+				}}
+			>
 				<form.Field name="name">
 					{(field) => (
-						<input
-							name={field.name}
-							value={field.state.value}
-							onChange={(event) => {
-								field.handleChange(event.target.value)
-							}}
-						/>
+						<div>
+							<input
+								name={field.name}
+								value={field.state.value ?? ""}
+								onChange={(event) => {
+									field.handleChange(event.target.value)
+								}}
+							/>
+							{field.state.meta.errors.join(", ")}
+						</div>
 					)}
 				</form.Field>
 			</form>
